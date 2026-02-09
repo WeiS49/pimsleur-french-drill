@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Sentence } from '../types'
+import { SAMPLE_SENTENCES } from '../utils/sampleData'
 
 interface SentenceManagerProps {
   sentences: Sentence[]
@@ -59,6 +60,20 @@ export function SentenceManager({ sentences, onSave }: SentenceManagerProps) {
   return (
     <div className="w-full max-w-lg p-6 space-y-6">
       <h2 className="text-2xl font-bold text-text-primary">Sentences</h2>
+
+      {/* Load sample sentences when empty */}
+      {sentences.length === 0 && (
+        <div className="rounded-xl border border-accent/30 p-5 space-y-3 text-center">
+          <p className="text-text-secondary text-sm">No sentences loaded yet. Start with our beginner pack!</p>
+          <button
+            onClick={() => onSave(SAMPLE_SENTENCES)}
+            className="px-6 py-3 rounded-lg bg-success/20 hover:bg-success/30 text-success font-medium transition-colors"
+          >
+            Load 20 Starter Sentences
+          </button>
+          <p className="text-text-muted text-xs">Covers greetings, introductions, and basic phrases (5 lessons)</p>
+        </div>
+      )}
 
       {/* Current sentences list */}
       {sentences.length > 0 && (

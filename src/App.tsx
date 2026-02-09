@@ -51,29 +51,34 @@ function App() {
       <main className="flex-1 flex flex-col items-center justify-center">
         {page === 'drill' && (
           <>
-            {!isConfigured ? (
-              <div className="text-center p-6 space-y-4">
-                <p className="text-text-secondary text-lg">
-                  Please configure your API key and voice IDs first.
+            {!isConfigured || sentences.length === 0 ? (
+              <div className="text-center p-6 max-w-sm space-y-6">
+                <h2 className="text-2xl font-bold text-text-primary">
+                  Welcome to Pimsleur FR
+                </h2>
+                <p className="text-text-secondary">
+                  Audio-first French training. Complete the setup below to start.
                 </p>
-                <button
-                  onClick={() => setPage('settings')}
-                  className="px-6 py-3 rounded-lg bg-accent hover:bg-accent-hover text-white transition-colors"
-                >
-                  Go to Settings
-                </button>
-              </div>
-            ) : sentences.length === 0 ? (
-              <div className="text-center p-6 space-y-4">
-                <p className="text-text-secondary text-lg">
-                  No sentences loaded. Import some to start drilling.
-                </p>
-                <button
-                  onClick={() => setPage('sentences')}
-                  className="px-6 py-3 rounded-lg bg-accent hover:bg-accent-hover text-white transition-colors"
-                >
-                  Import Sentences
-                </button>
+                <div className="space-y-3 text-left">
+                  <SetupStep
+                    n={1}
+                    done={!!settings.apiKey && !!settings.voiceIdFr}
+                    label="Configure API Key & Voices"
+                    onClick={() => setPage('settings')}
+                  />
+                  <SetupStep
+                    n={2}
+                    done={sentences.length > 0}
+                    label="Load Sentences"
+                    onClick={() => setPage('sentences')}
+                  />
+                  <SetupStep
+                    n={3}
+                    done={false}
+                    label="Start Drilling!"
+                    disabled={!isConfigured || sentences.length === 0}
+                  />
+                </div>
               </div>
             ) : (
               <DrillView
@@ -103,6 +108,41 @@ function App() {
         )}
       </main>
     </div>
+  )
+}
+
+function SetupStep({
+  n,
+  done,
+  label,
+  onClick,
+  disabled,
+}: {
+  n: number
+  done: boolean
+  label: string
+  onClick?: () => void
+  disabled?: boolean
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left ${
+        done
+          ? 'bg-success/10 text-success'
+          : disabled
+            ? 'bg-bg-card/50 text-text-muted cursor-default'
+            : 'bg-bg-card hover:bg-bg-secondary text-text-primary cursor-pointer'
+      }`}
+    >
+      <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+        done ? 'bg-success text-white' : 'bg-bg-secondary text-text-muted'
+      }`}>
+        {done ? '\u2713' : n}
+      </span>
+      <span className="text-sm font-medium">{label}</span>
+    </button>
   )
 }
 
