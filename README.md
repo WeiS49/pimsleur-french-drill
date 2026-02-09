@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# Pimsleur French Drill
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Audio-first French training web app based on the Pimsleur method. Uses ElevenLabs TTS with IndexedDB caching for cost-effective, high-quality audio generation.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Drill Mode**: CN/EN prompt -> anticipation phase ("Try to say it in French...") -> shrinking time bar -> FR answer -> auto-advance
+- **Tri-lingual TTS**: French, Chinese, and English audio via ElevenLabs API
+- **Audio Caching**: IndexedDB cache means you only pay for API calls once per sentence
+- **JSON Import/Export**: Manage sentence data with simple JSON format
+- **Dark Theme**: Tactical minimalist design with large touch targets
+- **PWA Ready**: Service Worker for offline static assets
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19 + TypeScript + Vite
+- Tailwind CSS v4
+- ElevenLabs API (Flash v2.5)
+- IndexedDB (audio cache) + localStorage (settings/progress)
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1. Go to **Settings** and enter your ElevenLabs API key
+2. Click **Load Voices** and select voices for French, Chinese, and English
+3. Go to **Sentences** and import JSON data:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```json
+[
+  { "id": 1, "fr": "Bonjour", "cn": "你好", "en": "Hello" },
+  { "id": 2, "fr": "J'habite à Puteaux", "cn": "我住在Puteaux", "en": "I live in Puteaux" }
+]
 ```
+
+4. Go to **Drill** and hit START
+
+## Sentence JSON Format
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | number | yes | Unique identifier |
+| `fr` | string | yes | French text |
+| `cn` | string | yes | Chinese translation |
+| `en` | string | yes | English translation |
+| `phonetic` | string | no | IPA phonetic notation |
+| `notes` | string | no | Grammar/pronunciation notes |
+| `lesson` | number | no | Lesson group number |
+| `difficulty` | number | no | Difficulty level (1-5) |
+
+## API Cost
+
+With audio caching, costs are one-time:
+
+| Sentences | Approx. Cost |
+|-----------|-------------|
+| 300 | Free (Free tier) |
+| 1,000 | ~$5 (Starter, 1 month) |
+| 2,000 | ~$22 (Creator, 1 month) |
+
+## Roadmap
+
+- [ ] Spaced repetition scheduler (Pimsleur graduated interval recall)
+- [ ] 30-minute structured lesson sessions
+- [ ] Capacitor iOS wrapper for background audio playback
+- [ ] Pronunciation hints (IPA display)
+- [ ] Learning statistics dashboard
+
+## License
+
+MIT
