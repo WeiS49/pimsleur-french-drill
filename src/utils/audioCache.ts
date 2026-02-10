@@ -16,8 +16,8 @@ function openDB(): Promise<IDBDatabase> {
   })
 }
 
-export function cacheKey(voiceId: string, text: string): string {
-  return `${voiceId}:${text}`
+export function cacheKey(voiceId: string, text: string, modelId: string): string {
+  return `${voiceId}:${modelId}:${text}`
 }
 
 export async function getCachedAudio(key: string): Promise<Blob | null> {

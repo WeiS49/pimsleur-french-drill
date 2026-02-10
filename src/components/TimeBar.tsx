@@ -9,7 +9,7 @@ export function TimeBar({ timeLeft, totalTime }: TimeBarProps) {
   return (
     <div className="w-full h-3 bg-bg-card rounded-full overflow-hidden">
       <div
-        className="h-full rounded-full transition-[width] duration-100 ease-linear"
+        className="h-full rounded-full"
         style={{
           width: `${fraction * 100}%`,
           backgroundColor: fraction > 0.3 ? 'var(--color-accent)' : 'var(--color-warning)',

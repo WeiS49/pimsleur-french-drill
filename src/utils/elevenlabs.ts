@@ -11,10 +11,10 @@ export interface TTSOptions {
 }
 
 export async function generateSpeech(options: TTSOptions): Promise<Blob> {
-  const { text, voiceId, apiKey, modelId = 'eleven_flash_v2_5', languageCode } = options
+  const { text, voiceId, apiKey, modelId = 'eleven_v3', languageCode } = options
 
   // Check cache first
-  const key = cacheKey(voiceId, text)
+  const key = cacheKey(voiceId, text, modelId)
   const cached = await getCachedAudio(key)
   if (cached) return cached
 
@@ -43,7 +43,7 @@ export async function generateSpeech(options: TTSOptions): Promise<Blob> {
 
   const blob = await response.blob()
 
-  // Cache the audio
+  // Cache the audio (key already includes modelId)
   await setCachedAudio(key, blob)
 
   return blob
@@ -55,6 +55,9 @@ export async function fetchVoices(apiKey: string): Promise<Array<{ voice_id: str
   })
 
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('401 Unauthorized: Your API key may lack the "Voices Read" permission. Please create a new key with both "Text to Speech" and "Voices Read" enabled.')
+    }
     throw new Error(`Failed to fetch voices (${response.status})`)
   }
 

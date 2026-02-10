@@ -13,15 +13,13 @@ export function useDrill(sentences: Sentence[], settings: Settings) {
   const [totalTime, setTotalTime] = useState(0)
   const { play, stop: stopAudio } = useAudioPlayer()
   const abortRef = useRef(false)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const rafRef = useRef<number>(0)
 
   const currentSentence = sentences[currentIndex] ?? null
 
   const clearTimer = useCallback(() => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current)
-      timerRef.current = null
-    }
+    cancelAnimationFrame(rafRef.current)
+    rafRef.current = 0
   }, [])
 
   const sleep = useCallback((ms: number) => {
@@ -34,18 +32,20 @@ export function useDrill(sentences: Sentence[], settings: Settings) {
     return new Promise((resolve) => {
       setTotalTime(durationMs)
       setTimeLeft(durationMs)
-      const start = Date.now()
-      timerRef.current = setInterval(() => {
-        const elapsed = Date.now() - start
+      const start = performance.now()
+      const tick = () => {
+        const elapsed = performance.now() - start
         const remaining = Math.max(0, durationMs - elapsed)
         setTimeLeft(remaining)
         if (remaining <= 0) {
-          clearTimer()
           resolve()
+        } else {
+          rafRef.current = requestAnimationFrame(tick)
         }
-      }, 50)
+      }
+      rafRef.current = requestAnimationFrame(tick)
     })
-  }, [clearTimer])
+  }, [])
 
   const playSequence = useCallback(async (index: number) => {
     if (!settings.apiKey || sentences.length === 0) return
@@ -62,7 +62,7 @@ export function useDrill(sentences: Sentence[], settings: Settings) {
       const voiceId = promptLang === 'cn' ? settings.voiceIdCn : settings.voiceIdEn
       const langCode = promptLang === 'cn' ? 'zh' : 'en'
       if (voiceId) {
-        await play(text, voiceId, settings.apiKey, langCode)
+        await play(text, voiceId, settings.apiKey, langCode, settings.modelId)
       }
     } catch (err) {
       console.error('Prompt audio failed:', err)
@@ -79,7 +79,7 @@ export function useDrill(sentences: Sentence[], settings: Settings) {
     setDrillState('answer')
     try {
       if (settings.voiceIdFr) {
-        await play(sentence.fr, settings.voiceIdFr, settings.apiKey, 'fr')
+        await play(sentence.fr, settings.voiceIdFr, settings.apiKey, 'fr', settings.modelId)
       }
     } catch (err) {
       console.error('Answer audio failed:', err)

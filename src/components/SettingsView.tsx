@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { Settings } from '../types'
 import { fetchVoices } from '../utils/elevenlabs'
+import { clearAudioCache, getCacheSize } from '../utils/audioCache'
 import { RECOMMENDED_VOICES } from '../utils/voices'
 
 interface SettingsViewProps {
@@ -15,10 +16,16 @@ export function SettingsView({ settings, onSave }: SettingsViewProps) {
   const [error, setError] = useState('')
   const [saved, setSaved] = useState(false)
   const [guideOpen, setGuideOpen] = useState(!settings.apiKey)
+  const [cacheCount, setCacheCount] = useState(0)
+  const [cacheCleared, setCacheCleared] = useState(false)
 
   useEffect(() => {
     setForm(settings)
   }, [settings])
+
+  useEffect(() => {
+    getCacheSize().then(setCacheCount).catch(() => {})
+  }, [])
 
   const handleLoadVoices = async () => {
     if (!form.apiKey) {
@@ -85,13 +92,24 @@ export function SettingsView({ settings, onSave }: SettingsViewProps) {
               {' '} (free, no credit card needed)
             </Step>
             <Step n={2}>
-              Dashboard &rarr; <strong>Developers</strong> &rarr; <strong>API Keys</strong> &rarr; Create
+              Dashboard &rarr; <strong>Developers</strong> &rarr; <strong>API Keys</strong> &rarr; Create.{' '}
+              Enable <strong>Text to Speech</strong> + <strong>Voices Read</strong> permissions
             </Step>
             <Step n={3}>
               Paste your API Key below
             </Step>
             <Step n={4}>
-              Click <strong>"Use Recommended Voices"</strong> or Load Voices to choose your own
+              Click <strong>"Use Recommended Voices"</strong> or Load Voices to choose your own.{' '}
+              Browse the{' '}
+              <a
+                href="https://elevenlabs.io/voice-library"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent hover:text-accent-hover underline"
+              >
+                Voice Library
+              </a>
+              {' '}for native-speaker voices
             </Step>
             <Step n={5}>
               Click <strong>Save Settings</strong>, then go to <strong>Sentences</strong> to load data, then <strong>Drill</strong> to start!
@@ -174,6 +192,23 @@ export function SettingsView({ settings, onSave }: SettingsViewProps) {
         }`}
       >
         {saved ? 'Saved!' : 'Save Settings'}
+      </button>
+
+      {/* Clear Audio Cache */}
+      <button
+        onClick={async () => {
+          await clearAudioCache()
+          setCacheCount(0)
+          setCacheCleared(true)
+          setTimeout(() => setCacheCleared(false), 2000)
+        }}
+        className={`w-full py-3 rounded-lg font-medium transition-colors active:scale-[0.98] ${
+          cacheCleared
+            ? 'bg-success text-white'
+            : 'bg-bg-card hover:bg-bg-card/80 text-text-secondary border border-bg-card'
+        }`}
+      >
+        {cacheCleared ? 'Cache Cleared!' : `Clear Audio Cache (${cacheCount} items)`}
       </button>
     </div>
   )

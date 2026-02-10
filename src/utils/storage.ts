@@ -12,7 +12,7 @@ const DEFAULT_SETTINGS: Settings = {
   voiceIdCn: '',
   voiceIdEn: '',
   promptLanguage: 'cn',
-  modelId: 'eleven_flash_v2_5',
+  modelId: 'eleven_v3',
 }
 
 export function loadSettings(): Settings {

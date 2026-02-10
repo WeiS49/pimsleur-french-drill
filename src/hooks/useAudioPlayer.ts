@@ -21,10 +21,11 @@ export function useAudioPlayer() {
     voiceId: string,
     apiKey: string,
     languageCode?: string,
+    modelId?: string,
   ): Promise<void> => {
     stop()
 
-    const blob = await generateSpeech({ text, voiceId, apiKey, languageCode })
+    const blob = await generateSpeech({ text, voiceId, apiKey, languageCode, modelId })
     const url = URL.createObjectURL(blob)
     urlRef.current = url
 

@@ -1,7 +1,7 @@
 export const RECOMMENDED_VOICES = {
   fr: [
-    { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Sarah (Female, clear)' },
-    { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George (Male, warm)' },
+    { id: 'pFZP5JQG7iQjIQuC4Bku', name: 'Lily (Female, French native)' },
+    { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel (Male, French native)' },
   ],
   cn: [
     { id: 'XB0fDUnXU5powFXDhCwa', name: 'Charlotte (Female, multilingual)' },

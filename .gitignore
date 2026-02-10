@@ -30,3 +30,7 @@ dist-ssr
 
 # Claude Code
 .claude/
+
+# Local scripts with hardcoded paths
+pimsleur.sh
+*.pid
